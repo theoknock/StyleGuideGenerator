@@ -15,8 +15,8 @@ import Observation
         return lhs.angle == rhs.angle
     }
     
-    var angle: Double = 1.0
-    var value: Double = 0.0
+    var angle: CGFloat = 0.0
+    var value: CGFloat = 0.0
 }
 
 struct ContentView: View {
@@ -25,6 +25,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             SliderView(hue: hue)
+//            Slider(value: $hue.angle, in: 0.0...360)
         }
     }
 }
@@ -67,27 +68,29 @@ struct SliderView: View {
                 .frame(width: diameter.width, height: diameter.height)
                 .contentShape(Circle())
                 .rotationEffect(.degrees(-90))
-//            
+
 //            // Spoke
             Circle()
-                .fill(Color(hue: Double(hue.angle) / 360.0, saturation: 1.5, brightness: 1.5))
+                .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.5, brightness: 1.5))
                 .frame(width: knobSize.width, height: knobSize.height)
                 .padding(EdgeInsets(top: knobSize.height, leading: knobSize.width, bottom: knobSize.height, trailing: knobSize.width))
                 .offset(y: -(radius))
-                .rotationEffect(Angle.degrees(Double(hue.angle)))
+                .rotationEffect(Angle.degrees(CGFloat(hue.angle).rounded()))
                 .gesture(DragGesture(minimumDistance: 0.0)
                     .onChanged({ value in
                         change(location: value.location)
                         feedbackGenerator.impactOccurred()
                     }))
-                .shadow(color: Color(hue: Double(hue.angle) / 360.0, saturation: 0.5, brightness: 0.5), radius: 7.5)
+                .shadow(color: Color(hue: CGFloat(hue.angle) / 360.0, saturation: 0.5, brightness: 0.5), radius: 7.5)
                 
             
-            Text("\(($hue.angle).wrappedValue)") //"\(String.init(format: "%.0f", hue.angle))º")
+            Text(String(format: "%.0f°", ($hue.angle).wrappedValue))
                     .font(.largeTitle).dynamicTypeSize(.xLarge)
-                    .foregroundStyle(Color(hue: Double(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
-                    .onChange(of: ($hue.angle).wrappedValue, perform: { newValue in
-                        hue.angle = newValue
+                    .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
+                    .onChange(of: ($hue.angle).wrappedValue, { oldValue, newValue in
+                        if (newValue != oldValue) {
+                            hue.angle = newValue
+                        }
                     })
         })
         .scaledToFit()
@@ -95,7 +98,7 @@ struct SliderView: View {
     
     func hueColors() -> [Color] {
         (0...360).map { i in
-            Color(hue: Double(i) / 360.0, saturation: 1.0, brightness: 1.0)
+            Color(hue: CGFloat(i) / 360.0, saturation: 1.0, brightness: 1.0)
         }
     }
 //    
@@ -112,7 +115,7 @@ struct SliderView: View {
         let value = fixedAngle / (2.0 * .pi) * totalValue
         
         if minimumValue >= 0.0 && maximumValue <= 360.0 {
-            hue.angle = value
+            hue.angle = value.rounded()
             hue.value = fixedAngle * 180 / .pi // converting to degrees
         }
     }
