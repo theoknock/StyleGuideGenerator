@@ -21,17 +21,33 @@ import Observation
 
 struct ContentView: View {
     @State var hue = Hue()
-
+    
+    private var _size: CGSize = CGSize.zero
+    var size: CGSize {
+        get {
+            return ((UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height)
+                    ? CGSize(width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.width)
+                    : CGSize(width: UIScreen.main.bounds.size.height, height: UIScreen.main.bounds.size.height))
+        }
+        set {
+            _size = newValue
+        }
+    }
+    
     var body: some View {
-        VStack(alignment: .center, content: {
-            GeometryReader { geometry in
-                ZStack(alignment: Alignment(horizontal: .center, vertical: .center), content: {
-                    ColorWheelView(hue: hue, frameSize: geometry.size)
-                })
-                VStack(alignment: .center, content: {
-                    SwatchView(hue: hue)
-                })
-            }
+        GeometryReader(content: { outerGeometry in
+            HStack(alignment: .center, content: {
+                ColorWheelView(hue: hue,
+                               frameSize: CGSize(width: size.width * 0.4125, height: size.height * 0.4125),
+                               indicatorSize: CGSize(width: max(30.0, (size.width * 0.4125) * 0.075), height: max(30.0, (size.height * 0.4125) * 0.75)))
+                .frame(width: (size.width * 0.5), height: (size.height * 0.5))
+                .background {
+                    RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                        .foregroundStyle(.ultraThickMaterial)
+                }
+                Spacer()
+            })
+            .frame(width: outerGeometry.size.width, height: (size.height * 0.5))
         })
     }
 }
@@ -39,25 +55,21 @@ struct ContentView: View {
 struct ColorWheelView: View {
     @Bindable var hue: Hue
     var frameSize: CGSize
+    var indicatorSize: CGSize
     let minimumValue: CGFloat = 0.0
     let maximumValue: CGFloat = 360.0
     let totalValue: CGFloat = 360.0
     
-    var _knobSize: CGSize = CGSize(width: 30.0, height: 30.0)
-    var knobSize: CGSize {
-        get { return _knobSize }
-        set { _knobSize = newValue }
-    }
+    //    var _knobSize: CGSize = CGSize(width: 30.0, height: 30.0)
+    //    var knobSize: CGSize {
+    //        get { return _knobSize }
+    //        set { _knobSize = newValue }
+    //    }
     
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
     var body: some View {
-        var _radius: CGFloat = frameSize.width
-        var radius: CGFloat {
-            get { return _radius}
-            set { _radius = newValue }
-        }
-        
+        var radius: CGFloat = (frameSize.width > frameSize.height) ? (frameSize.height / 2) : (frameSize.width / 2)
         var _diameter: CGSize = frameSize
         var diameter: CGSize {
             get { return _diameter }
@@ -69,37 +81,36 @@ struct ColorWheelView: View {
             Circle()
                 .strokeBorder(
                     AngularGradient(gradient: .init(colors: hueColors()), center: .center),
-                    lineWidth: knobSize.height
+                    lineWidth: (frameSize.width < frameSize.height) ? indicatorSize.height : indicatorSize.width
                 )
-                .frame(width: diameter.width, height: diameter.height)
                 .contentShape(Circle())
                 .rotationEffect(.degrees(-90))
-
-//            // Spoke
+            
+            // Spoke
             Circle()
-                .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.5, brightness: 1.5))
-                .frame(width: knobSize.width, height: knobSize.height)
-                .padding(EdgeInsets(top: knobSize.height, leading: knobSize.width, bottom: knobSize.height, trailing: knobSize.width))
-                .offset(y: -(radius))
+                .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 2.0))
+                .frame(width: (frameSize.width < frameSize.height) ? indicatorSize.height : indicatorSize.width)
+                .offset(y: -(radius - ((frameSize.width < frameSize.height) ? indicatorSize.height - (indicatorSize.height / 2) : indicatorSize.width - (indicatorSize.width / 2))))
                 .rotationEffect(Angle.degrees(CGFloat(hue.angle).rounded()))
                 .gesture(DragGesture(minimumDistance: 0.0)
                     .onChanged({ value in
                         change(location: value.location)
                         feedbackGenerator.impactOccurred()
                     }))
-                .shadow(color: Color(hue: CGFloat(hue.angle) / 360.0, saturation: 0.5, brightness: 0.5), radius: 7.5)
-                
+                .shadow(color: Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 0.0), radius: 15.0)
+            
             
             Text(String(format: "%.0f°", ($hue.angle).wrappedValue))
-                    .font(.largeTitle).dynamicTypeSize(.xLarge)
-                    .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
-                    .onChange(of: ($hue.angle).wrappedValue, { oldValue, newValue in
-                        if (newValue != oldValue) {
-                            hue.angle = newValue
-                        }
-                    })
+                .font(.largeTitle).dynamicTypeSize(.xLarge)
+                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
+                .onChange(of: ($hue.angle).wrappedValue, { oldValue, newValue in
+                    if (newValue != oldValue) {
+                        hue.angle = newValue
+                    }
+                })
         })
-        .scaledToFit()
+        .frame(width: diameter.width, height: diameter.height)
+        .fixedSize(horizontal: true, vertical: true)
     }
     
     func hueColors() -> [Color] {
@@ -107,13 +118,13 @@ struct ColorWheelView: View {
             Color(hue: CGFloat(i) / 360.0, saturation: 1.0, brightness: 1.0)
         }
     }
-//    
+    //
     private func change(location: CGPoint) {
         // creating vector from location point
         let vector = CGVector(dx: location.x, dy: location.y)
         
         // geting angle in radian need to subtract the knob radius and padding from the dy and dx
-        let angle = atan2(vector.dy - (knobSize.width), vector.dx - (knobSize.width)) + .pi/2.0
+        let angle = atan2(vector.dy - (indicatorSize.width), vector.dx - (indicatorSize.width)) + .pi/2.0
         
         // convert angle range from (-pi to pi) to (0 to 2pi)
         let fixedAngle = angle < 0.0 ? angle + 2.0 * .pi : angle
