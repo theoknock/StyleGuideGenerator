@@ -23,16 +23,22 @@ struct ContentView: View {
     @State var hue = Hue()
 
     var body: some View {
-        ZStack {
-            SliderView(hue: hue)
-//            Slider(value: $hue.angle, in: 0.0...360)
-        }
+        VStack(alignment: .center, content: {
+            GeometryReader { geometry in
+                ZStack(alignment: Alignment(horizontal: .center, vertical: .center), content: {
+                    ColorWheelView(hue: hue, frameSize: geometry.size)
+                })
+                VStack(alignment: .center, content: {
+                    SwatchView(hue: hue)
+                })
+            }
+        })
     }
 }
 
-struct SliderView: View {
+struct ColorWheelView: View {
     @Bindable var hue: Hue
-    
+    var frameSize: CGSize
     let minimumValue: CGFloat = 0.0
     let maximumValue: CGFloat = 360.0
     let totalValue: CGFloat = 360.0
@@ -46,13 +52,13 @@ struct SliderView: View {
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
     var body: some View {
-        var _radius: CGFloat = UIScreen.main.bounds.midX - UIScreen.main.bounds.minX
+        var _radius: CGFloat = frameSize.width
         var radius: CGFloat {
             get { return _radius}
             set { _radius = newValue }
         }
         
-        var _diameter: CGSize = CGSize(width: (UIScreen.main.bounds.maxX - 15.0) - (UIScreen.main.bounds.minX + 15.0), height: (UIScreen.main.bounds.maxY - 15.0) - (UIScreen.main.bounds.minY + 15.0))
+        var _diameter: CGSize = frameSize
         var diameter: CGSize {
             get { return _diameter }
             set { _diameter = newValue }
@@ -117,6 +123,18 @@ struct SliderView: View {
         if minimumValue >= 0.0 && maximumValue <= 360.0 {
             hue.angle = value.rounded()
             hue.value = fixedAngle * 180 / .pi // converting to degrees
+        }
+    }
+}
+
+struct SwatchView: View {
+    @Bindable var hue: Hue
+    
+    var body: some View {
+        HStack {
+            RoundedRectangle(cornerRadius: 12.0)
+                .frame(width: 100, height: 100)
+                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
         }
     }
 }
