@@ -11,6 +11,7 @@
 		B90BCF882BE3D79D00E7755C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90BCF872BE3D79D00E7755C /* ContentView.swift */; };
 		B90BCF8A2BE3D79E00E7755C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90BCF892BE3D79E00E7755C /* Assets.xcassets */; };
 		B90BCF8D2BE3D79E00E7755C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90BCF8C2BE3D79E00E7755C /* Preview Assets.xcassets */; };
+		B9BD46692BE55B5000A8749C /* CustomSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD46682BE55B5000A8749C /* CustomSliderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,8 @@
 		B90BCF872BE3D79D00E7755C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B90BCF892BE3D79E00E7755C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B90BCF8C2BE3D79E00E7755C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B9BD46682BE55B5000A8749C /* CustomSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSliderView.swift; sourceTree = "<group>"; };
+		B9BD466A2BE55F8800A8749C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +56,8 @@
 			children = (
 				B90BCF852BE3D79D00E7755C /* StyleGuideGeneratorApp.swift */,
 				B90BCF872BE3D79D00E7755C /* ContentView.swift */,
+				B9BD466A2BE55F8800A8749C /* README.md */,
+				B9BD46682BE55B5000A8749C /* CustomSliderView.swift */,
 				B90BCF892BE3D79E00E7755C /* Assets.xcassets */,
 				B90BCF8B2BE3D79E00E7755C /* Preview Content */,
 			);
@@ -139,6 +144,7 @@
 			files = (
 				B90BCF882BE3D79D00E7755C /* ContentView.swift in Sources */,
 				B90BCF862BE3D79D00E7755C /* StyleGuideGeneratorApp.swift in Sources */,
+				B9BD46692BE55B5000A8749C /* CustomSliderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
