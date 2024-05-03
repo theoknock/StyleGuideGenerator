@@ -84,7 +84,7 @@ struct ContentView: View {
                         .aspectRatio(1.0, contentMode: .fit)
                         .overlay {
                             Text("\(intensity.position)\n\(abs(intensity.value + 1.0))")
-                                .foregroundStyle(.regularMaterial)
+                                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: abs(intensity.value), brightness: 1.0))
                                 .font(.footnote).dynamicTypeSize(.xSmall)
                         }
                 }
