@@ -25,6 +25,11 @@ import Charts
         var value: Double
         var id = UUID()
     }
+    
+    func normalizedHue(hue: Double, addDegrees: Double) -> Double {
+        let newHue = (hue + addDegrees).truncatingRemainder(dividingBy: 360.0)
+        return newHue < 0 ? (newHue + 360) / 360 : newHue / 360
+    }
 }
 
 struct ContentView: View {
@@ -64,15 +69,53 @@ struct ContentView: View {
     
     var body: some View {
         HStack(alignment: .center, content: {
-            //            GeometryReader(content: { outerGeometry in
-            // two rows
             VStack(alignment: .center, content: {
                 // first row
                 HStack(alignment: .center, content: {
-                    Text("first row")
+//                    Text("first row")
                     // columns
                     VStack(alignment: .center, content: {
-                        Text("column")
+                            ColorWheelView(hue: hue,
+                                           frameSize: CGSize(width: size.width * 0.25, height: size.height * 0.25),
+                                           indicatorSize: CGSize(width: 30.0, height: 30.0))
+//                                            .frame(minWidth: size.width * 0.25, idealWidth: size.width * 0.3333, maxWidth: size.width * 0.3333, minHeight: size.height * 0.25, idealHeight: size.height * 0.3333, maxHeight: size.height, alignment: .center))
+//                                            .background {
+//                                                RoundedRectangle(cornerRadius: max(30.0, CGFloat((size.width * 0.25) * 0.075, style: .circular)
+//                                                    .foregroundStyle(.ultraThin)
+//                                            })
+                    })
+                    .frame(minWidth: size.width * 0.25, idealWidth: size.width * 0.3333, maxWidth: size.width, minHeight: size.height * 0.25, idealHeight: size.height * 0.3333, maxHeight: size.height, alignment: .center)
+                    .background(.clear.opacity(0.0))
+                    .foregroundStyle(.thinMaterial)
+                    .border(.purple, width: 10)
+                    
+                    VStack(alignment: .center, content: {
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue:
+                                                    hue.normalizedHue(hue: hue.angle, addDegrees: -hue.step), saturation: 1.0, brightness: 1.0)) // Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        //                            .overlay {
+                        //                                Text("\(CGFloat(hue.angle - hue.step) / 360.0)")
+                        //                                    .foregroundStyle(.regularMaterial)
+                        //                                    .font(.footnote).dynamicTypeSize(.xSmall)
+                        
+                            .aspectRatio(1.0, contentMode: .fit)
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        //                            .overlay {
+                        //                                Text("\(CGFloat(hue.angle) / 360.0)")
+                        //                                    .foregroundStyle(.regularMaterial)
+                        //                                    .font(.footnote).dynamicTypeSize(.xSmall)
+                        //                            }
+                            .aspectRatio(1.0, contentMode: .fit)
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue: hue.normalizedHue(hue: hue.angle, addDegrees: hue.step), saturation: 1.0, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        //                            .overlay {
+                        //                                Text("\(CGFloat(hue.angle + hue.step) / 360.0)")
+                        //                                    .foregroundStyle(.regularMaterial)
+                        //                                    .font(.footnote).dynamicTypeSize(.xSmall)
+                        //                            }
+                            .aspectRatio(1.0, contentMode: .fit)
+                        Stepper("\(hue.step)", value: $hue.step, in: 0...360, step: 1)
                     })
                     .frame(minWidth: size.width * 0.25, idealWidth: size.width * 0.3333, maxWidth: size.width, minHeight: size.height * 0.25, idealHeight: size.height * 0.3333, maxHeight: size.height, alignment: .center)
                     .background(.clear.opacity(0.0))
@@ -86,15 +129,6 @@ struct ContentView: View {
                     .background(.clear.opacity(0.0))
                     .foregroundStyle(.thinMaterial)
                     .border(.purple, width: 10)
-                    
-                    VStack(alignment: .center, content: {
-                        Text("column")
-                    })
-                    .frame(minWidth: size.width * 0.25, idealWidth: size.width * 0.3333, maxWidth: size.width, minHeight: size.height * 0.25, idealHeight: size.height * 0.3333, maxHeight: size.height, alignment: .center)
-                    .background(.clear.opacity(0.0))
-                    .foregroundStyle(.thinMaterial)
-                    .border(.purple, width: 10)
-                    //
                 })
                 .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width, minHeight: size.height * 0.25, idealHeight: size.height * 0.3333, maxHeight: size.height, alignment: .center)
                 .padding([.horizontal, .vertical])
@@ -129,7 +163,7 @@ struct ContentView: View {
                     .background(.clear.opacity(0.0))
                     .foregroundStyle(.thinMaterial)
                     .border(.purple, width: 10)
-                   
+                    
                 })
                 .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width, minHeight: size.height * 0.3333, idealHeight: size.height * 0.5, maxHeight: size.height * 0.6667, alignment: .center)
                 .padding([.horizontal, .vertical])
