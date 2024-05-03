@@ -228,13 +228,12 @@ struct ContentView: View {
                         
                         HStack(alignment: .center, spacing: 6.0, content: {
                             ForEach(intensities) { intensity in
-                                let angleIncrement: CGFloat = 1.0 - CGFloat((intensity.value / 12.0) * CGFloat(intensity.position))
                                 RoundedRectangle(cornerRadius: 12.0, style: .circular)
                                     .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
 //                                    .foregroundStyle(Color(hue: CGFloat(hue.angle), saturation: 1.0, brightness: CGFloat(angleIncrement)))
                                     .aspectRatio(1.0, contentMode: .fit)
                                     .overlay {
-                                        Text("BRIGHTNESS\n\(CGFloat(intensity.value))")
+                                        Text("BRIGHTNESS\n\(CGFloat(1.0 - intensity.value))")
                                             .foregroundStyle(.regularMaterial)
                                             .font(.footnote).dynamicTypeSize(.xSmall)
                                     }
