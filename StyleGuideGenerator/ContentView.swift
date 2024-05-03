@@ -18,7 +18,7 @@ import Charts
     
     var angle: CGFloat = 0.0
     var value: CGFloat = 0.0
-    var step:  CGFloat = 5.0
+    var step:  CGFloat = 2.5
     
     struct Intensity: Identifiable {
         var position: Int
@@ -64,12 +64,12 @@ import Charts
 struct ContentView: View {
     @State var hue = Hue()
     
-//    let positions: [Int] = Array<Int>(0..<12)
-//    var step: CGFloat = (1.0 / 12.0) //{ hue.scale(oldMin: 0.0, oldMax: 11.0 / 11.0, value: 1.0 / 12.0, newMin: 0.0, newMax: 1.0) }
-//    var values: [CGFloat]  { return (positions).map { Double($0) * step } }
-//    var intensities: [Hue.Intensity] {
-//        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
-//    }
+    //    let positions: [Int] = Array<Int>(0..<12)
+    //    var step: CGFloat = (1.0 / 12.0) //{ hue.scale(oldMin: 0.0, oldMax: 11.0 / 11.0, value: 1.0 / 12.0, newMin: 0.0, newMax: 1.0) }
+    //    var values: [CGFloat]  { return (positions).map { Double($0) * step } }
+    //    var intensities: [Hue.Intensity] {
+    //        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
+    //    }
     //        var hueValues: Array<Double>  { return Array(arrayLiteral: (0..<11).map { Double($0) * step }) }
     //        var saturationValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
     //        var brightnessValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
@@ -126,11 +126,10 @@ struct ContentView: View {
                                 //                                            .font(.footnote).dynamicTypeSize(.xSmall)
                                 //                                    }
                             }
-                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width * 0.5, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.5, alignment: .center)
+                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width, minHeight: (bodyGeometry.size.height * 0.3125) * 0.3125, idealHeight: (bodyGeometry.size.height * 0.5) * 0.3125, maxHeight: (bodyGeometry.size.height * 0.5) * 0.3125, alignment: .center)
                             .padding([.vertical, .horizontal])
                             .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                             .foregroundStyle(.thinMaterial)
-                            .border(.purple, width: 10)
                             .border(.gray, width: 5)
                             
                             HStack {
@@ -143,7 +142,10 @@ struct ContentView: View {
                                 //                                            .font(.footnote).dynamicTypeSize(.xSmall)
                                 //                                    }
                             }
+                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width, minHeight: (bodyGeometry.size.height * 0.3125) * 0.3125, idealHeight: (bodyGeometry.size.height * 0.5) * 0.3125, maxHeight: (bodyGeometry.size.height * 0.5) * 0.3125, alignment: .center)
                             .padding([.vertical, .horizontal])
+                            .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                            .foregroundStyle(.thinMaterial)
                             .border(.gray, width: 5)
                             
                             HStack {
@@ -156,17 +158,19 @@ struct ContentView: View {
                                 //                                            .font(.footnote).dynamicTypeSize(.xSmall)
                                 //                                    }
                             }
-                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width * 0.5, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.5, alignment: .center)
+                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width, minHeight: (bodyGeometry.size.height * 0.3125) * 0.3125, idealHeight: (bodyGeometry.size.height * 0.5) * 0.3125, maxHeight: (bodyGeometry.size.height * 0.5) * 0.3125, alignment: .center)
                             .padding([.vertical, .horizontal])
+                            .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                            .foregroundStyle(.thinMaterial)
                             .border(.gray, width: 5)
                             //
-                            HStack {
-                                //                                Stepper("\(Int(hue.step))°", value: $hue.step, in: -360...360, step: 1)
-                                //                                    .aspectRatio(2.0, contentMode: .fit)
-                            }
-                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width * 0.5, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.5, alignment: .center)
-                            .padding([.vertical, .horizontal])
-                            .border(.gray, width: 5)
+                            //                            HStack {
+                            //                                //                                Stepper("\(Int(hue.step))°", value: $hue.step, in: -360...360, step: 1)
+                            //                                //                                    .aspectRatio(2.0, contentMode: .fit)
+                            //                            }
+                            //                            .frame(minWidth: bodyGeometry.size.width * 0.25, idealWidth: bodyGeometry.size.width * 0.5, maxWidth: bodyGeometry.size.width * 0.5, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.5, alignment: .center)
+                            //                            .padding([.vertical, .horizontal])
+                            //                            .border(.gray, width: 5)
                             
                             //
                             //                            VStack(alignment: .center, content: {
@@ -185,9 +189,13 @@ struct ContentView: View {
                     })
                     .frame(minWidth: bodyGeometry.size.width * 0.5, idealWidth: bodyGeometry.size.width, maxWidth: bodyGeometry.size.width, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.6667, alignment: .center)
                     .padding([.vertical, .horizontal])
-                    .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
-                    .foregroundStyle(.thickMaterial)
-                    .border(.orange, width: 10)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12.0)
+                        //                            .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
+                        //                            .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                            .foregroundStyle(.thickMaterial)
+                    }
+                    //                    .border(.orange, width: 10)
                     
                     
                     // second row
@@ -206,17 +214,21 @@ struct ContentView: View {
                             }
                         })
                         .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
-                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                        //                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-//                        .border(.purple, width: 10)
+                        //                        .border(.purple, width: 10)
                         
                         HStack(alignment: .center, spacing: 6.0, content: {
                             ForEach(hue.intensities) { intensity in
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12.0, style: .circular)
                                         .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: hue.normalizedStep + CGFloat(intensity.value), brightness: 1.0))
-                                        
                                     VStack {
+                                        Text("\(intensity.position + 1)")
+                                            .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)).opacity(0.3125))
+                                        //                                        .font(.system(size: (size.height * 0.5) * 0.25, weight: .black, design: .rounded))
+                                            .font(.largeTitle).dynamicTypeSize(.xxxLarge).fontDesign(.serif)
+                                        //                                            .scaledToFill()
                                         Text("SATURATION\n\(CGFloat(hue.normalizedStep + CGFloat(intensity.value)))")
                                             .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
                                             .font(.footnote).dynamicTypeSize(.xSmall)
@@ -226,27 +238,34 @@ struct ContentView: View {
                             }
                         })
                         .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
-                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                        //                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-//                        .border(.purple, width: 10)
+                        //                        .border(.purple, width: 10)
                         
                         HStack(alignment: .center, spacing: 6.0, content: {
                             ForEach(hue.intensities) { intensity in
-                                RoundedRectangle(cornerRadius: 12.0, style: .circular)
-                                    .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
-                                //                                    .foregroundStyle(Color(hue: CGFloat(hue.angle), saturation: 1.0, brightness: CGFloat(angleIncrement)))
-                                    .aspectRatio(1.0, contentMode: .fit)
-                                    .overlay {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                                        .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
+                                    //                                    .foregroundStyle(Color(hue: CGFloat(hue.angle), saturation: 1.0, brightness: CGFloat(angleIncrement)))
+                                        .aspectRatio(1.0, contentMode: .fit)
+                                    VStack {
+                                        Text("\(intensity.position + 1)")
+                                            .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: CGFloat(intensity.value), brightness: 1.0).opacity(0.3125))
+                                        //                                        .font(.system(size: (size.height * 0.5) * 0.25, weight: .black, design: .rounded))
+                                            .font(.largeTitle).dynamicTypeSize(.xxxLarge).fontDesign(.serif)
+                                        //                                            .scaledToFill()
                                         Text("BRIGHTNESS\n\(CGFloat(1.0 - intensity.value))")
                                             .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: CGFloat(intensity.value), brightness: 1.0))
                                             .font(.footnote).dynamicTypeSize(.xSmall)
                                     }
+                                }
                             }
                         })
                         .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
-                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                        //                        .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-//                        .border(.purple, width: 10)
+                        //                        .border(.purple, width: 10)
                         //                            ForEach(intensities) { intensity in
                         //                                let angleIncrement: CGFloat = CGFloat((intensity.value / 12.0) * intensity.position)
                         //
@@ -287,9 +306,13 @@ struct ContentView: View {
                     })
                     .frame(minWidth: bodyGeometry.size.width * 0.5, idealWidth: bodyGeometry.size.width, maxWidth: bodyGeometry.size.width, minHeight: bodyGeometry.size.height * 0.3333, idealHeight: bodyGeometry.size.height * 0.5, maxHeight: bodyGeometry.size.height * 0.6667, alignment: .center)
                     .padding([.vertical, .horizontal])
-                    .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
-                    .foregroundStyle(.thickMaterial)
-                    .border(.orange, width: 10)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12.0)
+                        //                            .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0))
+                        //                            .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
+                            .foregroundStyle(.thickMaterial)
+                    }
+                    //                    .border(.orange, width: 10)
                 })
                 .frame(minWidth: bodyGeometry.size.width * 0.5, idealWidth: bodyGeometry.size.width, maxWidth: bodyGeometry.size.width, minHeight: bodyGeometry.size.height * 0.5, idealHeight: bodyGeometry.size.height, maxHeight: bodyGeometry.size.height, alignment: .center)
                 .padding([.vertical, .horizontal])
