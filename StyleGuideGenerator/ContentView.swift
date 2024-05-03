@@ -73,34 +73,35 @@ struct ContentView: View {
                 })
             }
                 
-                VStack {
-                    HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
-                        ForEach(intensities) { intensity in
-                            RoundedRectangle(cornerRadius: 12.0, style: .circular)
-                                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: abs(intensity.value + 1.0)))
-                                .aspectRatio(1.0, contentMode: .fit)
-                                .overlay {
-                                    Text("\(intensity.position)\n\(abs(intensity.value + 1.0))")
-                                        .foregroundStyle(.regularMaterial)
-                                        .font(.footnote).dynamicTypeSize(.xSmall)
-                                }
-                        }
-                    })
-                    HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
-                        ForEach(intensities) { intensity in
-                            RoundedRectangle(cornerRadius: 12.0, style: .circular)
-                                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: abs(intensity.value), brightness: 1.0))
-                                .aspectRatio(1.0, contentMode: .fit)
-                                .overlay {
-                                    Text("\(intensity.position)\n\(-intensity.value)")
-                                        .foregroundStyle(.regularMaterial)
-                                        .font(.footnote).dynamicTypeSize(.xSmall)
-                                }
-                        }
-                    })
-                }
+                
 //                     .frame(width: outerGeometry.size.width, height: (size.height * 0.5))
             })
+        VStack {
+            HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
+                ForEach(intensities) { intensity in
+                    RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                        .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: abs(intensity.value + 1.0)))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay {
+                            Text("\(intensity.position)\n\(abs(intensity.value + 1.0))")
+                                .foregroundStyle(.regularMaterial)
+                                .font(.footnote).dynamicTypeSize(.xSmall)
+                        }
+                }
+            })
+            HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
+                ForEach(intensities) { intensity in
+                    RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                        .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: abs(intensity.value), brightness: 1.0))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay {
+                            Text("\(intensity.position)\n\(-intensity.value)")
+                                .foregroundStyle(.regularMaterial)
+                                .font(.footnote).dynamicTypeSize(.xSmall)
+                        }
+                }
+            })
+        }
         }
 }
 
