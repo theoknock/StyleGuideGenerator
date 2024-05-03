@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import Combine
 import Observation
+import Charts
 
 @Observable class Hue: Equatable {
     static func == (lhs: Hue, rhs: Hue) -> Bool {
@@ -17,10 +18,24 @@ import Observation
     
     var angle: CGFloat = 0.0
     var value: CGFloat = 0.0
+    
+    struct Intensity: Identifiable {
+        var position: Int
+        var value: Double
+        var id = UUID()
+    }
 }
 
 struct ContentView: View {
     @State var hue = Hue()
+    
+    let positions = Array(0...11)
+    let step: Double = (0.0 - 1.0) / 11
+    var multipliers: [Double] = [0.0, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909]
+    var values: [Double]  { return (0...11).map { Double($0) * step } }
+    var intensities: [Hue.Intensity] {
+        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
+    }
     
     private var _size: CGSize = CGSize.zero
     var size: CGSize {
@@ -36,20 +51,57 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader(content: { outerGeometry in
-            HStack(alignment: .center, content: {
-                ColorWheelView(hue: hue,
-                               frameSize: CGSize(width: size.width * 0.4125, height: size.height * 0.4125),
-                               indicatorSize: CGSize(width: max(30.0, (size.width * 0.4125) * 0.075), height: max(30.0, (size.height * 0.4125) * 0.75)))
-                .frame(width: (size.width * 0.5), height: (size.height * 0.5))
-                .background {
-                    RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
-                        .foregroundStyle(.ultraThickMaterial)
+            VStack {
+                HStack(alignment: .center, content: {
+                    ColorWheelView(hue: hue,
+                                   frameSize: CGSize(width: size.width * 0.4125, height: size.height * 0.4125),
+                                   indicatorSize: CGSize(width: max(30.0, (size.width * 0.4125) * 0.075), height: max(30.0, (size.height * 0.4125) * 0.75)))
+                    .frame(width: (size.width * 0.5), height: (size.height * 0.5))
+                    .background {
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundStyle(.ultraThickMaterial)
+                    }
+                    Chart {
+                        ForEach(intensities) { intensity in
+                            PointMark(
+                                x: .value("\(intensity.position)", intensity.position),
+                                y: .value("\(intensity.value)", intensity.value)
+                            )
+                            
+                        }
+                    }
+                })
+            }
+                
+                VStack {
+                    HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
+                        ForEach(intensities) { intensity in
+                            RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: abs(intensity.value + 1.0)))
+                                .aspectRatio(1.0, contentMode: .fit)
+                                .overlay {
+                                    Text("\(intensity.position)\n\(abs(intensity.value + 1.0))")
+                                        .foregroundStyle(.regularMaterial)
+                                        .font(.footnote).dynamicTypeSize(.xSmall)
+                                }
+                        }
+                    })
+                    HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
+                        ForEach(intensities) { intensity in
+                            RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                                .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: abs(intensity.value), brightness: 1.0))
+                                .aspectRatio(1.0, contentMode: .fit)
+                                .overlay {
+                                    Text("\(intensity.position)\n\(-intensity.value)")
+                                        .foregroundStyle(.regularMaterial)
+                                        .font(.footnote).dynamicTypeSize(.xSmall)
+                                }
+                        }
+                    })
                 }
-                Spacer()
+//                     .frame(width: outerGeometry.size.width, height: (size.height * 0.5))
             })
-            .frame(width: outerGeometry.size.width, height: (size.height * 0.5))
-        })
-    }
+        }
 }
 
 struct ColorWheelView: View {
