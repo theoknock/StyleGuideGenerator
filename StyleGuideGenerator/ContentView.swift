@@ -18,12 +18,19 @@ import Charts
     
     var angle: CGFloat = 0.0
     var value: CGFloat = 0.0
-    var step:  CGFloat = 15.0
+    var step:  CGFloat = 5.0
     
     struct Intensity: Identifiable {
         var position: Int
         var value: CGFloat
         var id = UUID()
+    }
+    
+    let positions: [Int] = Array<Int>(0..<12)
+    var normalizedStep: CGFloat = (1.0 / 12.0)
+    var values: [CGFloat]  { return (positions).map { Double($0) * normalizedStep } }
+    var intensities: [Hue.Intensity] {
+        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
     }
     
     func normalizedHue(hue: Double, addDegrees: Double) -> Double {
@@ -57,12 +64,12 @@ import Charts
 struct ContentView: View {
     @State var hue = Hue()
     
-    let positions: [Int] = Array<Int>(1..<12)
-    var step: CGFloat = (1.0 / 12.0) //{ hue.scale(oldMin: 0.0, oldMax: 11.0 / 11.0, value: 1.0 / 12.0, newMin: 0.0, newMax: 1.0) }
-    var values: [CGFloat]  { return (positions).map { Double($0) * step } }
-    var intensities: [Hue.Intensity] {
-        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
-    }
+//    let positions: [Int] = Array<Int>(0..<12)
+//    var step: CGFloat = (1.0 / 12.0) //{ hue.scale(oldMin: 0.0, oldMax: 11.0 / 11.0, value: 1.0 / 12.0, newMin: 0.0, newMax: 1.0) }
+//    var values: [CGFloat]  { return (positions).map { Double($0) * step } }
+//    var intensities: [Hue.Intensity] {
+//        zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
+//    }
     //        var hueValues: Array<Double>  { return Array(arrayLiteral: (0..<11).map { Double($0) * step }) }
     //        var saturationValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
     //        var brightnessValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
@@ -89,6 +96,7 @@ struct ContentView: View {
         }
     }
     
+    /// <#Description#>
     var body: some View {
         GeometryReader { bodyGeometry in
             HStack(alignment: .center, content: {
@@ -185,15 +193,10 @@ struct ContentView: View {
                     // second row
                     VStack(alignment: .center, content: {
                         HStack(alignment: .center, spacing: 6.0, content: {
-                            //                            let startingAngle: CGFloat  = CGFloat(hue.normalizedHue(hue: hue.angle, addDegrees: (-hue.step * 6.0)))
-                            
-                            ForEach(intensities) { intensity in
-                                //                                let angleIncrement = CGFloat(hue.step * CGFloat(intensity.position)) // angle multiplier
-                                //                                let hueAngle       = hue.normalizedHue(hue: CGFloat(hue.normalizedHue(hue: hue.angle, addDegrees: (-hue.step * 6.0))), addDegrees: CGFloat(hue.step * CGFloat(intensity.position)))
+                            ForEach(hue.intensities) { intensity in
                                 let hueAngle = hue.normalizedHue(hue: CGFloat(hue.angle), addDegrees: CGFloat(hue.step * CGFloat(intensity.position)))
                                 RoundedRectangle(cornerRadius: 12.0, style: .circular)
                                     .fill(Color(hue: CGFloat(hueAngle), saturation: 1.0, brightness: 1.0))
-                                //                                    .foregroundStyle(Color(hue: hue.normalizedHue(hue: CGFloat(hue.normalizedHue(hue: hue.angle, addDegrees: (-hue.step * 6.0))), addDegrees: 0.0), saturation: 1.0, brightness: 1.0))
                                     .aspectRatio(1.0, contentMode: .fit)
                                     .overlay {
                                         Text("HUE\n\(CGFloat(hueAngle))")
@@ -202,32 +205,33 @@ struct ContentView: View {
                                     }
                             }
                         })
-                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
+                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
                         .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-                        .border(.purple, width: 10)
+//                        .border(.purple, width: 10)
                         
                         HStack(alignment: .center, spacing: 6.0, content: {
-                            ForEach(intensities) { intensity in
-                                let angleIncrement: CGFloat = CGFloat((intensity.value / 12.0) * CGFloat(intensity.position))
-                                RoundedRectangle(cornerRadius: 12.0, style: .circular)
-                                    .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: CGFloat(intensity.value), brightness: 1.0))
-                                //                                    .foregroundStyle(Color(hue: CGFloat(hue.angle), saturation: CGFloat(angleIncrement), brightness: 1.0))
-                                    .aspectRatio(1.0, contentMode: .fit)
-                                    .overlay {
-                                        Text("SATURATION\n\(CGFloat(intensity.value))")
+                            ForEach(hue.intensities) { intensity in
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                                        .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: hue.normalizedStep + CGFloat(intensity.value), brightness: 1.0))
+                                        
+                                    VStack {
+                                        Text("SATURATION\n\(CGFloat(hue.normalizedStep + CGFloat(intensity.value)))")
                                             .foregroundStyle(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
                                             .font(.footnote).dynamicTypeSize(.xSmall)
                                     }
+                                }
+                                .aspectRatio(1.0, contentMode: .fit)
                             }
                         })
-                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
+                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
                         .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-                        .border(.purple, width: 10)
+//                        .border(.purple, width: 10)
                         
                         HStack(alignment: .center, spacing: 6.0, content: {
-                            ForEach(intensities) { intensity in
+                            ForEach(hue.intensities) { intensity in
                                 RoundedRectangle(cornerRadius: 12.0, style: .circular)
                                     .fill(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.0, brightness: 1.0 - CGFloat(intensity.value)))
                                 //                                    .foregroundStyle(Color(hue: CGFloat(hue.angle), saturation: 1.0, brightness: CGFloat(angleIncrement)))
@@ -239,10 +243,10 @@ struct ContentView: View {
                                     }
                             }
                         })
-                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
+                        .frame(minWidth: size.width * 0.5, idealWidth: size.width, maxWidth: size.width * 2.0, minHeight: (size.height * 0.5) * 0.25, idealHeight: (size.height * 0.5) * 0.3125, maxHeight: (size.height * 0.5) * 0.3125, alignment: .center)
                         .background(Color(hue: CGFloat(216.0 / 360.0), saturation: 0.5, brightness: 0.5, opacity: 1.0))
                         .foregroundStyle(.thinMaterial)
-                        .border(.purple, width: 10)
+//                        .border(.purple, width: 10)
                         //                            ForEach(intensities) { intensity in
                         //                                let angleIncrement: CGFloat = CGFloat((intensity.value / 12.0) * intensity.position)
                         //
