@@ -18,6 +18,7 @@ import Charts
     
     var angle: CGFloat = 0.0
     var value: CGFloat = 0.0
+    var step:  CGFloat = 20.0
     
     struct Intensity: Identifiable {
         var position: Int
@@ -31,8 +32,7 @@ struct ContentView: View {
     
     let positions = Array(0...11)
     let step: Double = (0.0 - 1.0) / 11
-    var multipliers: [Double] = [0.0, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909, 0.090909]
-    var values: [Double]  { return (0...11).map { Double($0) * step } }
+    var values: [Double]  { return /*scaleBatch(data: */(0...11).map { Double($0) * step }/*, newMin: 0.0, newMax: 1.0)*/ }
     var intensities: [Hue.Intensity] {
         zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
     }
@@ -61,22 +61,42 @@ struct ContentView: View {
                         RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
                             .foregroundStyle(.ultraThickMaterial)
                     }
+                    
+                    VStack {
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue: CGFloat(hue.angle - hue.step) / 360.0, saturation: 1.09, brightness: 1.0)) // Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.09, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
+                            .foregroundColor(Color(hue: CGFloat(hue.angle + hue.step) / 360.0, saturation: 1.09, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                        Stepper("\(hue.angle)", value: $hue.angle, in: 0...360, step: 1)
+                    }
+                    
                     Chart {
                         ForEach(intensities) { intensity in
                             PointMark(
                                 x: .value("\(intensity.position)", intensity.position),
-                                y: .value("\(intensity.value)", intensity.value)
+                                y: .value("\(intensity.value)", abs(intensity.value))
                             )
                             
                         }
                     }
                 })
             }
-                
-                
-//                     .frame(width: outerGeometry.size.width, height: (size.height * 0.5))
-            })
+        })
         VStack {
+            HStack(alignment: .center, spacing: 6.0, content: {
+                ForEach(intensities) { intensity in
+                    RoundedRectangle(cornerRadius: 12.0, style: .circular)
+                        .foregroundStyle(Color(hue: abs(CGFloat(hue.angle + (intensity.value * CGFloat(intensity.position))) / 360.0), saturation: 1.0, brightness: 1.0))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay {
+                            Text("\(intensity.position)\n\(abs(CGFloat(hue.angle + (intensity.value * CGFloat(intensity.position)))))")
+                                .foregroundStyle(.regularMaterial)
+                                .font(.footnote).dynamicTypeSize(.xSmall)
+                        }
+                }
+            })
             HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 6.0, content: {
                 ForEach(intensities) { intensity in
                     RoundedRectangle(cornerRadius: 12.0, style: .circular)
@@ -102,7 +122,12 @@ struct ContentView: View {
                 }
             })
         }
-        }
+    }
+    
+    func scaleBatch(data: [Double], newMin: Double, newMax: Double) -> [Double] {
+        guard let oldMin = data.min(), let oldMax = data.max(), oldMax != oldMin else { return data }
+        return data.map { newMin + (newMax - newMin) * ($0 - oldMin) / (oldMax - oldMin) }
+    }
 }
 
 struct ColorWheelView: View {
