@@ -31,11 +31,24 @@ struct ContentView: View {
     @State var hue = Hue()
     
     let positions = Array(0...11)
-    let step: Double = (0.0 - 1.0) / 11
-    var values: [Double]  { return /*scaleBatch(data: */(0...11).map { Double($0) * step }/*, newMin: 0.0, newMax: 1.0)*/ }
+    let step: Double = (1.0 - 0.00) / 11
+    var values: [Double]  { return (0..<11).map { Double($0) * step } }
     var intensities: [Hue.Intensity] {
         zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
     }
+    //        var hueValues: Array<Double>  { return Array(arrayLiteral: (0..<11).map { Double($0) * step }) }
+    //        var saturationValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
+    //        var brightnessValues: Array<Double>  { return (0..<11).map { Double($0) * step } }
+    //        var values: Array<Array<[Double]>> { return Array<Array<[Double]>>(arrayLiteral: Array(hueValues, saturationValues, brightnessValues) }
+    //        var hueValues: [Double]  { return scaleBatch(data: (0...11).map { Double($0) * step }, newMin: hue.angle - hue.step, newMax: hue.angle + hue.step) }
+    //        var saturationValues: [Double]  { return /*scaleBatch(data: */(0...11).map { Double($0) * step }/*, newMin: 0.0, newMax: 1.0)*/ }
+    //        var brightnessValues: [Double]  { return /*scaleBatch(data: */(0...11).map { Double($0) * step }/*, newMin: 0.0, newMax: 1.0)*/ }
+    
+    //        var intensities: [Hue.Intensity] {
+    //            zip(positions, values).map { Hue.Intensity(position: $0, value: $1) }
+    //            }
+    //
+    //
     
     private var _size: CGSize = CGSize.zero
     var size: CGSize {
@@ -65,30 +78,74 @@ struct ContentView: View {
                     VStack {
                         RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
                             .foregroundColor(Color(hue: CGFloat(hue.angle - hue.step) / 360.0, saturation: 1.09, brightness: 1.0)) // Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                            .aspectRatio(1.0, contentMode: .fit)
                         RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
                             .foregroundColor(Color(hue: CGFloat(hue.angle) / 360.0, saturation: 1.09, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
+                            .aspectRatio(1.0, contentMode: .fit)
                         RoundedRectangle(cornerRadius: max(30.0, (size.width * 0.375) * 0.075), style: .circular)
                             .foregroundColor(Color(hue: CGFloat(hue.angle + hue.step) / 360.0, saturation: 1.09, brightness: 1.0)) //.foregroundStyle(Color(hue: CGFloat(1.0 / hue.angle), saturation: 1.0, brightness: 1.0))
-                        Stepper("\(hue.angle)", value: $hue.angle, in: 0...360, step: 1)
-                    }
-                    
-                    Chart {
-                        ForEach(intensities) { intensity in
-                            PointMark(
-                                x: .value("\(intensity.position)", intensity.position),
-                                y: .value("\(intensity.value)", abs(intensity.value))
-                            )
-                            
+                            .aspectRatio(1.0, contentMode: .fit)
+                        Stepper("\(hue.step)", value: $hue.step, in: 0...360, step: 1)
+                        
+                        Chart {
+                            ForEach(1...12, id: \.self) { index in
+                                let yValue = Double(index - 1) / 11.0
+                                PointMark(
+                                    x: .value("Month", index),
+                                    y: .value("Value", yValue)
+                                )
+                                .foregroundStyle(.blue)
+                                .symbol(Circle().strokeBorder())
+                                .annotation(position: .top, alignment: .center) {
+                                    Text(String(format: "%.8f", yValue))
+                                }
+                            }
+                        }
+                        .chartXScale(domain: .automatic(includesZero: false))  // Ensures x-axis starts at 1
+                        .chartXAxis {
+                            AxisMarks(preset: .extended, position: .bottom) {
+                                AxisGridLine()
+                                AxisTick()
+                                AxisValueLabel()
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks(preset: .extended, position: .leading)
                         }
                     }
+                    
+                    
+                    //                    Chart {
+                    //                        ForEach(intensities) { intensity in
+                    //                            PointMark(
+                    //                                x: .value("\(intensity.position)", intensity.position),
+                    //                                y: .value("\(intensity.value)", intensity.value)
+                    //                            )
+                    //                            LineMark(
+                    //                                x: .value("\(intensity.position)", intensity.position),
+                    //                                y: .value("\(intensity.value)", intensity.value)
+                    //                            )
+                    //                            AxisMarks(values: <#T##[Plottable]#>)
+                    //                        }
+                    //                    }
                 })
             }
         })
         VStack {
             HStack(alignment: .center, spacing: 6.0, content: {
+                let startingAngle  = (CGFloat(hue.angle / 360.0) - CGFloat(hue.step / 360.0))
+                let angleIncrement = abs((CGFloat(hue.angle / 360.0) - CGFloat(hue.step / 360.0)) - (CGFloat(hue.angle / 360.0) + CGFloat(hue.step / 360.0))) / 12
+                
                 ForEach(intensities) { intensity in
+                    var angleMultipler = CGFloat(intensity.position) // angle multiplier
+                    var hueAngle       = startingAngle + (angleIncrement * angleMultipler)
+                   /*
+                    
+                    WARNING: Choosing a hue and step that crosses the 360· boundary will mess things up
+                    
+                    */
                     RoundedRectangle(cornerRadius: 12.0, style: .circular)
-                        .foregroundStyle(Color(hue: abs(CGFloat(hue.angle + (intensity.value * CGFloat(intensity.position))) / 360.0), saturation: 1.0, brightness: 1.0))
+                        .foregroundStyle(Color(hue: hueAngle, saturation: 1.0, brightness: 1.0))
                         .aspectRatio(1.0, contentMode: .fit)
                         .overlay {
                             Text("\(intensity.position)\n\(abs(CGFloat(hue.angle + (intensity.value * CGFloat(intensity.position)))))")
